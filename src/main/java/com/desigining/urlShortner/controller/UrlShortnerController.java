@@ -21,4 +21,11 @@ public class UrlShortnerController {
     public ResponseEntity<?> getAllUrls(){
         return new ResponseEntity<>(urlShortnerService.getAllUrlShortner(), HttpStatus.OK);
     }
+
+    @Operation(summary = "Get short URL", description = "Retrieves short URL")
+    @RequestMapping(value = "/shortUrl", method = RequestMethod.POST)
+    public ResponseEntity<?> createdShortUrl(@RequestBody String originalUrl) throws Exception{
+        String shortUrl = urlShortnerService.createShortUrl(originalUrl);
+        return new ResponseEntity<>(shortUrl, HttpStatus.CREATED);
+    }
 }

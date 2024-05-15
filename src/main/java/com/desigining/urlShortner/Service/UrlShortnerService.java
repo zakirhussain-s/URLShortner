@@ -10,7 +10,7 @@ public interface UrlShortnerService {
 
     List<UrlShortnerDTO> getAllUrlShortner();
 
-    String getShortUrl();
+    String createShortUrl(String originalUrl) throws Exception;
 
     String getOriginalUrl(String tinyUrl);
     String redirectToOriginalUrl(String tinyUrl);
