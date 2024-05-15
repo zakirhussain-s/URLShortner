@@ -3,11 +3,11 @@ package com.desigining.urlShortner.Service;
 import com.desigining.urlShortner.models.UrlShortnerDTO;
 import com.desigining.urlShortner.repository.UrlShortnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class UrlShortnerServiceImpl implements UrlShortnerService{
@@ -35,15 +35,32 @@ public class UrlShortnerServiceImpl implements UrlShortnerService{
 
         UrlShortnerDTO result = urlShortnerRepository.save(urlShortnerDTO);
 
-        if(result != null)
-            return shortAndBaseUrl;
-        else
+        if (result == null) {
             throw new Exception("Something went wrong");
+        } else {
+            return shortAndBaseUrl;
+        }
     }
 
     @Override
     public String getOriginalUrl(String tinyUrl) {
-        return null;
+        Optional<UrlShortnerDTO> result = urlShortnerRepository.findById(tinyUrl);
+
+        final String[] originalUrl = {""};
+        result.ifPresent(urlShortnerDTO -> {
+            originalUrl[0] = urlShortnerDTO.getOriginalUrl();
+        });
+
+        if(result.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Url not found "+tinyUrl);
+        }
+
+//      2nd way to get url
+//        if(result.isPresent()){
+//            UrlShortnerDTO urlShortnerDTO = result.get();
+//            String originalUrl = urlShortnerDTO.getOriginalUrl();
+//        }
+        return Arrays.toString(originalUrl);
     }
 
     @Override
