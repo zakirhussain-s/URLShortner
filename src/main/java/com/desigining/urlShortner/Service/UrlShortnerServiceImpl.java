@@ -3,6 +3,7 @@ package com.desigining.urlShortner.Service;
 import com.desigining.urlShortner.models.UrlShortnerDTO;
 import com.desigining.urlShortner.repository.UrlShortnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -43,13 +44,12 @@ public class UrlShortnerServiceImpl implements UrlShortnerService{
     }
 
     @Override
+    @Cacheable("tinyUrls")
     public String getOriginalUrl(String tinyUrl) {
         Optional<UrlShortnerDTO> result = urlShortnerRepository.findById(tinyUrl);
 
         final String[] originalUrl = {""};
-        result.ifPresent(urlShortnerDTO -> {
-            originalUrl[0] = urlShortnerDTO.getOriginalUrl();
-        });
+        result.ifPresent(urlShortnerDTO -> originalUrl[0] = urlShortnerDTO.getOriginalUrl());
 
         if(result.isEmpty()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Url not found "+tinyUrl);
